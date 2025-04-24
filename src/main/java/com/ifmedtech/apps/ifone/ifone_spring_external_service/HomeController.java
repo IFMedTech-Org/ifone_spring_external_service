@@ -10,6 +10,6 @@ public class HomeController {
 
     @GetMapping("/")
     public ResponseEntity<String> home() {
-        return ResponseEntity.ok("IFOne Spring External Service");
+        return ResponseEntity.ok("IF-ONE Spring External Service");
     }
 }
