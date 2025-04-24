@@ -3,14 +3,12 @@ package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.model.SowWordDocumentData;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.sections.*;
 import org.apache.poi.xwpf.usermodel.*;
-import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-@Service
 public class CreateWordDoc {
 
     public static String createDocument(SowWordDocumentData data) throws IOException {
