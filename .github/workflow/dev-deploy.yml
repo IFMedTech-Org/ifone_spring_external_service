@@ -2,7 +2,8 @@ name: Build and Deploy to EC2 via ECR
 
 on:
   push:
-    branches: [ dev ]
+    branches:
+      - dev
 
 jobs:
   build-and-deploy:
