@@ -3,7 +3,7 @@ name: Build and Deploy to EC2 via ECR
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   build-and-deploy:
@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '21'
+          distribution: 'temurin'
+
 
       - name: Build Spring Boot JAR
         run: ./mvnw clean package -DskipTests
