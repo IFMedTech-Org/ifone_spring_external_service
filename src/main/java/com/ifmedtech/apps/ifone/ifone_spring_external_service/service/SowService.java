@@ -3,7 +3,6 @@ package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.DocumentRequestDTO;
-import com.ifmedtech.apps.ifone.ifone_spring_external_service.utils.create_word_utils.CreateWordDoc;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -53,16 +52,16 @@ public class SowService {
 
         ExecutorService executor = Executors.newFixedThreadPool(10); // Thread pool
 
-        CompletableFuture<String> projectObjectives = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("project_objectives"), inputData, "gpt-4o-mini", "project_objectives"), executor);
-        CompletableFuture<String> projectBackground = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("project_background"), inputData, "gpt-4o-mini", "project_background"), executor);
-        CompletableFuture<String> existingProducts = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("existing_products"), inputData, "gpt-4o", "existing_products"), executor);
-        CompletableFuture<String> briefReq = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("brief_req"), inputData, "gpt-4o-mini", "brief_req"), executor);
-        CompletableFuture<String> replyKey = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("reply_key"), inputData, "gpt-4o-mini", "reply_key"), executor);
-        CompletableFuture<String> replyValue = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("reply_value"), inputData, "gpt-4o-mini", "reply_value"), executor);
-        CompletableFuture<String> exclusions = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("exclusions"), inputData, "gpt-4o-mini", "exclusions"), executor);
-        CompletableFuture<String> assumptions = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("assumptions"), inputData, "gpt-4o-mini", "assumptions"), executor);
-        CompletableFuture<String> timeline = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("timeline"), inputData, "gpt-4o-mini", "timeline"), executor);
-        CompletableFuture<String> iso = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("iso"), inputData, "gpt-4o-mini", "iso"), executor);
+        CompletableFuture<String> projectObjectives = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("project_objectives"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> projectBackground = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("project_background"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> existingProducts = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("existing_products"), inputData, "gpt-4o"), executor);
+        CompletableFuture<String> briefReq = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("brief_req"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> replyKey = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("reply_key"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> replyValue = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("reply_value"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> exclusions = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("exclusions"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> assumptions = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("assumptions"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> timeline = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("timeline"), inputData, "gpt-4o-mini"), executor);
+        CompletableFuture<String> iso = CompletableFuture.supplyAsync(() -> callOpenAI(prompts.get("iso"), inputData, "gpt-4o-mini"), executor);
 
         // Wait for all to complete
         CompletableFuture<Void> allDone = CompletableFuture.allOf(
@@ -74,7 +73,7 @@ public class SowService {
 
         executor.shutdown(); // Clean up the thread pool
 
-        return CreateWordDoc.createDocument(
+        DocumentData documentData = new DocumentData(
                 fileName,
                 request.getTitle(),
                 request.getParties(),
@@ -89,9 +88,11 @@ public class SowService {
                 timeline.join(),
                 iso.join()
         );
+
+        return CreateWordDoc.createDocument(documentData);
     }
 
-    private String callOpenAI(String prompt, String inputData, String model, String sectionName) {
+    private String callOpenAI(String prompt, String inputData, String model) {
 
         String apiKey = openaiApiKey;
         if (apiKey == null || apiKey.isEmpty()) {
@@ -114,7 +115,7 @@ public class SowService {
 
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(OPENAI_URL, entity, Map.class);
-            Map<?, ?> choice = ((List<Map<String, Object>>) response.getBody().get("choices")).get(0);
+            Map<?, ?> choice = ((List<Map<String, Object>>) Objects.requireNonNull(response.getBody()).get("choices")).getFirst();
             return (String) ((Map<?, ?>) choice.get("message")).get("content");
 
         } catch (Exception e) {

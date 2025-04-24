@@ -1,4 +1,4 @@
-package com.ifmedtech.apps.ifone.ifone_spring_external_service.utils.create_word_utils;
+package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
 
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;

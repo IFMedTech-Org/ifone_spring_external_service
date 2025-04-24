@@ -1,11 +1,11 @@
-package com.ifmedtech.apps.ifone.ifone_spring_external_service.utils.sections;
+package com.ifmedtech.apps.ifone.ifone_spring_external_service.service.sections;
 
-import com.ifmedtech.apps.ifone.ifone_spring_external_service.utils.create_word_utils.WordTableBuilder;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.WordTableBuilder;
 import org.apache.poi.xwpf.usermodel.*;
 
 import java.util.List;
 
-import static com.ifmedtech.apps.ifone.ifone_spring_external_service.utils.create_word_utils.WordUtils.*;
+import static com.ifmedtech.apps.ifone.ifone_spring_external_service.service.WordUtils.*;
 
 public class SetupProjectSection {
 

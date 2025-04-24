@@ -1,4 +1,4 @@
-package com.ifmedtech.apps.ifone.ifone_spring_external_service.utils.create_word_utils;
+package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
 
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
@@ -57,7 +57,7 @@ public class WordTableBuilder {
         for (int col : new int[]{0, 1, 3}) {
             mergeStart.put(col, -1);
         }
-        int currentRowIdx = 1; // Row 0 is header
+        // Row 0 is header
 
         for (List<String> rowData : timelineData) {
             XWPFTableRow row = table.createRow();
@@ -102,7 +102,6 @@ public class WordTableBuilder {
                 }
             }
 
-            currentRowIdx++;
         }
 
         // Final vertical merges after loop
@@ -135,7 +134,7 @@ public class WordTableBuilder {
         XWPFTableRow totalRow = table.getRow(lastRowIndex);
 
         // Merge Objective (col 1) and Description (col 2)
-        mergeCellsHorizontally(totalRow, 0, 2);
+        mergeCellsHorizontally(totalRow);
 
         // Optional: Center-align merged cell
         XWPFTableCell mergedCell = totalRow.getCell(1);
@@ -330,11 +329,11 @@ public class WordTableBuilder {
         shd.setFill(hexColor);
     }
 
-    private static void mergeCellsHorizontally(XWPFTableRow row, int fromCol, int toCol) {
-        for (int colIndex = fromCol; colIndex <= toCol; colIndex++) {
+    private static void mergeCellsHorizontally(XWPFTableRow row) {
+        for (int colIndex = 0; colIndex <= 2; colIndex++) {
             XWPFTableCell cell = row.getCell(colIndex);
             CTTcPr tcPr = cell.getCTTc().isSetTcPr() ? cell.getCTTc().getTcPr() : cell.getCTTc().addNewTcPr();
-            if (colIndex == fromCol) {
+            if (colIndex == 0) {
                 tcPr.addNewHMerge().setVal(STMerge.RESTART);
             } else {
                 tcPr.addNewHMerge().setVal(STMerge.CONTINUE);
