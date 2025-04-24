@@ -19,7 +19,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-
       - name: Build Spring Boot JAR
         run: ./mvnw clean package -DskipTests
 
@@ -36,7 +35,7 @@ jobs:
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password --region ap-south-1 | \
-          docker login --username AWS --password-stdin 872515288690.dkr.ecr.ap-south-1.amazonaws.com
+            docker login --username AWS --password-stdin 872515288690.dkr.ecr.ap-south-1.amazonaws.com
 
       - name: Build and Push Docker Image
         run: |
@@ -52,15 +51,24 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: |
+            ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          debug: true                # <-- enable SSH debug output
+          script_stop: false
           script: |
+            set -ex                   # <-- echo commands and fail on error
+            
             aws ecr get-login-password --region ap-south-1 | \
-            docker login --username AWS --password-stdin 872515288690.dkr.ecr.ap-south-1.amazonaws.com
+              docker login --username AWS --password-stdin 872515288690.dkr.ecr.ap-south-1.amazonaws.com
             
             docker pull 872515288690.dkr.ecr.ap-south-1.amazonaws.com/ifmedtech/platform/ifone_spring_external_service:latest
             
             docker stop ifone-service || true
-            docker rm ifone-service || true
+            docker rm   ifone-service || true
             
             docker run -d -p 8086:8086 --name ifone-service \
               872515288690.dkr.ecr.ap-south-1.amazonaws.com/ifmedtech/platform/ifone_spring_external_service:latest
+            
+            echo "=== container logs (last 100 lines) ==="
+            docker logs ifone-service --tail 100 || true
