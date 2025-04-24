@@ -3,6 +3,7 @@ package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.DocumentRequestDTO;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.model.SowWordDocumentData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -73,7 +74,7 @@ public class SowService {
 
         executor.shutdown(); // Clean up the thread pool
 
-        DocumentData documentData = new DocumentData(
+        SowWordDocumentData documentData = new SowWordDocumentData(
                 fileName,
                 request.getTitle(),
                 request.getParties(),

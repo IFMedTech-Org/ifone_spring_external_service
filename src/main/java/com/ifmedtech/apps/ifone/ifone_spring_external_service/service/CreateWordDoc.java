@@ -1,5 +1,6 @@
 package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
 
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.model.SowWordDocumentData;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.sections.*;
 import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.nio.file.Paths;
 @Service
 public class CreateWordDoc {
 
-    public static String createDocument(DocumentData data) throws IOException {
+    public static String createDocument(SowWordDocumentData data) throws IOException {
         XWPFDocument doc = new XWPFDocument();
 
         // Setup Document

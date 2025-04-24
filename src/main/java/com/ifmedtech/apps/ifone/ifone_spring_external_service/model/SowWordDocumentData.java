@@ -1,6 +1,6 @@
-package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
+package com.ifmedtech.apps.ifone.ifone_spring_external_service.model;
 
-public class DocumentData {
+public class SowWordDocumentData {
     public String fileName;
     public String title;
     public String parties;
@@ -15,10 +15,10 @@ public class DocumentData {
     public String timelineTable;
     public String iso;
 
-    public DocumentData(String fileName, String title, String parties,
-                        String projectObjectives, String projectBackground, String existingProductsTable,
-                        String requirements, String keyFeatures, String proposedValue,
-                        String exclusions, String assumptions, String timelineTable, String iso) {
+    public SowWordDocumentData(String fileName, String title, String parties,
+                               String projectObjectives, String projectBackground, String existingProductsTable,
+                               String requirements, String keyFeatures, String proposedValue,
+                               String exclusions, String assumptions, String timelineTable, String iso) {
         this.fileName = fileName;
         this.title = title;
         this.parties = parties;
