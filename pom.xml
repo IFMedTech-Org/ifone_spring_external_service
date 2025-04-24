@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ifmedtech.apps.ifone</groupId>
     <artifactId>ifone_spring_external_service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>ifone_spring_external_service</name>
     <description>ifone_spring_external_service</description>
     <url/>
