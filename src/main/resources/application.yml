@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ifone_spring_external_service
+
+server:
+  port: 8086
