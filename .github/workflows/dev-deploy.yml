@@ -46,7 +46,7 @@ jobs:
             -t 872515288690.dkr.ecr.ap-south-1.amazonaws.com/ifmedtech/platform/ifone_spring_external_service:latest \
             --push .
 
-      - name: Deploy on EC2 (pull and run)
+      - name: Deploy ifone_spring_external_service
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -54,21 +54,7 @@ jobs:
           key: |
             ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          debug: true                # <-- enable SSH debug output
+          debug: true
           script_stop: false
           script: |
-            set -ex                   # <-- echo commands and fail on error
-            
-            aws ecr get-login-password --region ap-south-1 | \
-              docker login --username AWS --password-stdin 872515288690.dkr.ecr.ap-south-1.amazonaws.com
-            
-            docker pull 872515288690.dkr.ecr.ap-south-1.amazonaws.com/ifmedtech/platform/ifone_spring_external_service:latest
-            
-            docker stop ifone-service || true
-            docker rm   ifone-service || true
-            
-            docker run -d -p 8086:8086 --name ifone-service \
-              872515288690.dkr.ecr.ap-south-1.amazonaws.com/ifmedtech/platform/ifone_spring_external_service:latest
-            
-            echo "=== container logs (last 100 lines) ==="
-            docker logs ifone-service --tail 100 || true
+            bash /home/ubuntu/projects/ifone/spring_external_service/deploy.sh
