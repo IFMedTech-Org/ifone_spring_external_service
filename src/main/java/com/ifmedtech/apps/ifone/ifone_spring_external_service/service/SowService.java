@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 public class SowService {
     private final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     private final String PROMPT_FILE = "src/main/resources/sow_prompt.json";
-    @Value("${OPENAI_API_KEY}")
+    @Value("${spring.ai.openai.apiKey}")
     private String openaiApiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 

@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class PrescriptionGeminiService {
 
-    @Value("${gemini.api_key}")
+    @Value("${spring.ai.gemini.apiKey}")
     private String apiKey;
 
     @Value("${gemini.model}")
@@ -44,12 +44,18 @@ public class PrescriptionGeminiService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.body());
 
-        // Extract JSON text response from AI response
         String jsonText = rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
+        String cleanedJson = jsonText.replaceAll("```json|```", "").trim();
 
-        // Convert extracted JSON string into a List<Map<String, Object>> since response is an array
-        return objectMapper.readValue(jsonText.replaceAll("```json|```", "").trim(), new TypeReference<>() {
-        });
+        JsonNode parsed = objectMapper.readTree(cleanedJson);
+
+        if (parsed.isArray()) {
+            return objectMapper.convertValue(parsed, new TypeReference<>() {});
+        } else if (parsed.isObject()) {
+            return List.of(objectMapper.convertValue(parsed, new TypeReference<>() {}));
+        } else {
+            throw new RuntimeException("Invalid response format from Gemini");
+        }
     }
 
 }
