@@ -20,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sow")
+@CrossOrigin(origins = "*")
 public class SowController {
     @Autowired
     private SowService sowService;

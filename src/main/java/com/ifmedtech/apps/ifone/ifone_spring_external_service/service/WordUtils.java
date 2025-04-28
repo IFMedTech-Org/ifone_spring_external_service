@@ -56,7 +56,6 @@ public class WordUtils {
         run.setBold(bold);
         run.setFontSize(10);
         run.setFontFamily("Calibri");
-        doc.createParagraph();
     }
 
     public static void addListBulletPoint(XWPFDocument doc, String text) {
@@ -66,7 +65,6 @@ public class WordUtils {
         run.setFontSize(10);
         run.setFontFamily("Calibri");
         para.setIndentationLeft(Units.toEMU(0.035));
-        doc.createParagraph();
     }
 
     public static void addPoints(XWPFDocument doc, String text) {
@@ -79,7 +77,6 @@ public class WordUtils {
         run.setFontSize(10);
         run.setFontFamily("Calibri");
         para.setIndentationLeft(Units.toEMU(0.07));
-        doc.createParagraph();
     }
 
     public static List<List<String>> getMultipleListFromText(String gptOutput) {
