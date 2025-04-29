@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.DocumentRequestDTO;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.model.SowWordDocumentData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,15 +25,19 @@ import java.util.concurrent.Executors;
 @Service
 public class SowService {
     private final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-    private final String PROMPT_FILE = "src/main/resources/sow_prompt.json";
-    @Value("${OPENAI_API_KEY}")
+    @Value("${spring.ai.openai.apiKey}")
     private String openaiApiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Autowired
+    private CreateWordDoc createWordDoc;
+
     public Map<String, String> loadPrompts() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(new File(PROMPT_FILE), new TypeReference<>() {
-        });
+        return mapper.readValue(
+                new ClassPathResource("sow_prompt.json").getInputStream(),
+                new TypeReference<>() {}
+        );
     }
 
     public String loadInputData(DocumentRequestDTO request) {
@@ -90,7 +95,7 @@ public class SowService {
                 iso.join()
         );
 
-        return CreateWordDoc.createDocument(documentData);
+        return createWordDoc.createDocument(documentData);
     }
 
     private String callOpenAI(String prompt, String inputData, String model) {

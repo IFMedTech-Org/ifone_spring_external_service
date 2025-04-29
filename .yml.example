@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: ifone_spring_external_service
+
+  ai:
+    openai:
+      apiKey: ""
+
+    gemini:
+      apiKey: ""
+
+server:
+  port: 8080
+
+app:
+  document:
+    output-path: output/

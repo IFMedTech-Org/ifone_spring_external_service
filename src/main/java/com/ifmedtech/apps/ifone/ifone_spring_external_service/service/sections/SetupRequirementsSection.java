@@ -37,23 +37,27 @@ public class SetupRequirementsSection {
         }
 
         // 3. Exclusions
+        doc.createParagraph();
         addSubHeading(doc, "3. Exclusions");
         for (String point : cleanBulletCode(exclusions)) {
             addPoints(doc, point);
         }
 
         // 4. Assumptions
+        doc.createParagraph();
         addSubHeading(doc, "4. Assumptions");
         for (String point : cleanBulletCode(assumptions)) {
             addPoints(doc, point);
         }
 
         // 5. Dependencies (Static)
+        doc.createParagraph();
         addSubHeading(doc, "5. Dependencies");
         addPoints(doc, "Dependencies from foreign suppliers (if any).");
         addPoints(doc, "Timelines proposed by testing labs during the verification stage.");
 
         // 6. Regulatory Standards and Project Risk Assessment & Strategy
+        doc.createParagraph();
         addSubHeading(doc, "6. Regulatory Standards and Project Risk Assessment & Strategy");
         addParagraph(doc, "Applicable Standards to the product (for reference purpose only):", true);
         addParagraph(doc, "International Standards", true);
@@ -63,6 +67,7 @@ public class SetupRequirementsSection {
         }
 
         // Regulatory Pathway Steps
+        doc.createParagraph();
         addSubHeading(doc, "Regulatory Pathway as per IMDR, 2017 (India)");
         addParagraph(doc, "Following pathway can be followed for receiving manufacturing license", true);
 
