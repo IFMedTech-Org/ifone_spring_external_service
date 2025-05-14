@@ -1,6 +1,9 @@
 #configuration ifmt
 init
 
+#FILE
+download
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
