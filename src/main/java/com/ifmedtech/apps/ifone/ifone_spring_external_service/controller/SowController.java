@@ -49,7 +49,7 @@ public class SowController {
     @CrossOrigin(origins = "*")
     public ResponseEntity<Resource> downloadDocument(@PathVariable String fileName) {
         try {
-            Path filePath = Paths.get("documents").resolve(fileName).normalize();
+            Path filePath = Paths.get("/app/download").resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists() || !resource.isReadable()) {

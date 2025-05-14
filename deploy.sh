@@ -8,12 +8,14 @@ PROFILE="dev" # change to "prod" for production
 REGION="ap-south-1"
 REPO_BASE="872515288690.dkr.ecr.${REGION}.amazonaws.com/ifmedtech/platform"
 IMAGE="${REPO_BASE}/${SERVICE_NAME}:latest"
+DEPLOY_DIR="/home/ubuntu/projects/ifone/spring_external_service"
 
 # === Use current project directory ===
 DEPLOY_DIR="/home/ubuntu/projects/ifone/spring_external_service"
 LOG_DIR="${DEPLOY_DIR}/logs"
 CONFIG_DIR="${DEPLOY_DIR}"
 LOG_FILE="${LOG_DIR}/${SERVICE_NAME}.log"
+DOWNLOAD_DIR="${DEPLOY_DIR}/download"
 
 # === Ensure logs folder exists ===
 mkdir -p "$LOG_DIR"
@@ -34,6 +36,7 @@ docker run -d \
   -p ${PORT}:${PORT} \
   --name $SERVICE_NAME \
   -v ${CONFIG_DIR}:/config \
+  -v ${DOWNLOAD_DIR}:/app/download \
   -e "SPRING_PROFILES_ACTIVE=${PROFILE}" \
   $IMAGE \
   --spring.config.additional-location=classpath:/,file:/config/
