@@ -20,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sow")
+@CrossOrigin(origins = "*")
 public class SowController {
     @Autowired
     private SowService sowService;
@@ -45,6 +46,7 @@ public class SowController {
     }
 
     @GetMapping("/download/{fileName}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<Resource> downloadDocument(@PathVariable String fileName) {
         try {
             Path filePath = Paths.get("documents").resolve(fileName).normalize();

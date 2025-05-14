@@ -43,12 +43,14 @@ public class SetupProjectSection {
             line = line.trim();
             if (line.matches("^2\\.\\d .*")) {
                 // Subsection heading like 2.1 Key Mechanisms
+                doc.createParagraph();
                 addBulletPointHeading(doc, line, true);
             } else if (line.startsWith("-")) {
                 // Bullet point
                 addListBulletPoint(doc, line.substring(1).trim());
             } else if (!line.isEmpty()) {
                 // Regular paragraph
+                doc.createParagraph();
                 addBulletPointHeading(doc, line ,false);
             }
         }

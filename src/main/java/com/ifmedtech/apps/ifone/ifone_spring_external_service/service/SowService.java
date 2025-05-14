@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.DocumentRequestDTO;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.model.SowWordDocumentData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
@@ -27,6 +28,9 @@ public class SowService {
     @Value("${spring.ai.openai.apiKey}")
     private String openaiApiKey;
     private final RestTemplate restTemplate = new RestTemplate();
+
+    @Autowired
+    private CreateWordDoc createWordDoc;
 
     public Map<String, String> loadPrompts() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -91,7 +95,7 @@ public class SowService {
                 iso.join()
         );
 
-        return CreateWordDoc.createDocument(documentData);
+        return createWordDoc.createDocument(documentData);
     }
 
     private String callOpenAI(String prompt, String inputData, String model) {
