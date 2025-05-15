@@ -66,5 +66,6 @@ jobs:
             echo "Logged in as user: $(whoami)"
             echo "Current directory: $(pwd)"
             echo "Checking for deploy.sh:"
+            ls -l /home/ubuntu/
             ls -l /home/ubuntu/projects/ifone/spring_external_service/
             bash /home/ubuntu/projects/ifone/spring_external_service/deploy.sh
