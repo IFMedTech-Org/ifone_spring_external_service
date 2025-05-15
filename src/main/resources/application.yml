@@ -5,16 +5,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ifone_prescriptions
     username: username
-    password: password
+    password: postgres
     driver-class-name: org.postgresql.Driver
-
-    jpa:
-      hibernate:
-        ddl-auto: update
-      show-sql: true
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
   port: 8086
@@ -25,8 +17,8 @@ gemini:
 aws:
   s3:
     bucket:
-      name: your_bucket_name
-      region: your_region
+      name: ifone-spring-external-service
+      region: ap-south-1
 
 app:
   paths:
