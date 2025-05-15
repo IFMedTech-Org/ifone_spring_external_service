@@ -1,6 +1,8 @@
 package com.ifmedtech.apps.ifone.ifone_spring_external_service.controller;
 
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionGeminiInputDTO;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionMedicineResponseDTO;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionResultUpdateRequest;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.GenerateGeminiPayload;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.PrescriptionGeminiService;
 import org.springframework.http.MediaType;
@@ -26,7 +28,7 @@ public class PrescriptionGeminiController {
 
     @PostMapping(value = "/process-file", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> convertTextToJson(
-            @RequestBody PrescriptionGeminiInputDTO prescriptionGeminiInputDTO,  // Accepting the input text directly as a String
+            @RequestBody PrescriptionGeminiInputDTO prescriptionGeminiInputDTO,
             @RequestParam(value = "prompt", defaultValue = "Extract the medications and their dosage with frequency in JSON format") String prompt) {
 
         try {
@@ -38,14 +40,13 @@ public class PrescriptionGeminiController {
             }
 
             String jsonPayload = fileConverter.convertToGeminiJson(prescriptionGeminiInputDTO.getBase64Image(), prompt);
-
             List<Map<String, Object>> geminiResponse = geminiService.sendToGemini(jsonPayload);
 
-            geminiService.savePrescriptionToDatabase(prescriptionGeminiInputDTO, geminiResponse);
+            List<PrescriptionMedicineResponseDTO> savedItems = geminiService.savePrescriptionToDatabase(prescriptionGeminiInputDTO, geminiResponse);
 
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(geminiResponse);
+                    .body(savedItems);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -54,7 +55,18 @@ public class PrescriptionGeminiController {
                             "message", Optional.ofNullable(e.getMessage()).orElse("Unexpected error")
                     ));
         }
-
     }
 
+    @PostMapping("/update-results")
+    public ResponseEntity<?> updateResults(@RequestBody PrescriptionResultUpdateRequest request) {
+        try {
+            geminiService.updateResults(request);
+            return ResponseEntity.ok(Map.of("message", "Results updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Update failed",
+                    "message", e.getMessage()
+            ));
+        }
+    }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -13,18 +14,29 @@ import java.time.LocalDateTime;
 public class PrescriptionRecordEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
+    @Column(name = "doctor_name")
     private String doctorName;
+
+    @Column(name = "device_id")
     private String deviceId;
+
+    @Column(name = "image_path")
     private String imagePath;
 
-    @Lob
-    private String prescriptionJson;
+    @Column(name = "medication")
+    private String medication;
+
+    @Column(name = "dosage")
+    private String dosage;
+
+    @Column(name = "frequency")
+    private String frequency;
 
     @Enumerated(EnumType.STRING)
-    private ResultStatus result;
+    private ResultStatus result = ResultStatus.NONE;
 
     private LocalDateTime createdAt;
 

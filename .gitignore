@@ -3,6 +3,11 @@ init
 
 #FILE
 download
+# Ignore generated SOW documents
+/document_downloads/
+
+# Ignore uploaded prescriptions
+/prescription_uploads/
 
 HELP.md
 target/
