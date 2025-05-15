@@ -19,8 +19,3 @@ aws:
     bucket:
       name: ifone-spring-external-service
       region: ap-south-1
-
-app:
-  paths:
-    sow: document_downloads/
-    prescription_uploads: prescription_uploads/
