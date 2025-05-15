@@ -26,20 +26,22 @@ public class PrescriptionGeminiController {
 
     @PostMapping(value = "/process-file", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> convertTextToJson(
-            @RequestBody PrescriptionGeminiInputDTO base64ImageInput,  // Accepting the input text directly as a String
+            @RequestBody PrescriptionGeminiInputDTO prescriptionGeminiInputDTO,  // Accepting the input text directly as a String
             @RequestParam(value = "prompt", defaultValue = "Extract the medications and their dosage with frequency in JSON format") String prompt) {
 
         try {
-            if (base64ImageInput.getInput() == null || base64ImageInput.getInput().isBlank()) {
+            if (prescriptionGeminiInputDTO.getBase64Image() == null || prescriptionGeminiInputDTO.getBase64Image().isBlank()) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "error", "Invalid input",
                         "message", "Image is missing or empty"
                 ));
             }
 
-            String jsonPayload = fileConverter.convertToGeminiJson(base64ImageInput.getInput(), prompt);
+            String jsonPayload = fileConverter.convertToGeminiJson(prescriptionGeminiInputDTO.getBase64Image(), prompt);
 
             List<Map<String, Object>> geminiResponse = geminiService.sendToGemini(jsonPayload);
+
+            geminiService.savePrescriptionToDatabase(prescriptionGeminiInputDTO, geminiResponse);
 
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)

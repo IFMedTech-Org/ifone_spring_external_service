@@ -3,6 +3,9 @@ package com.ifmedtech.apps.ifone.ifone_spring_external_service.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionGeminiInputDTO;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.entity.PrescriptionRecordEntity;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.repository.PrescriptionRecordRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,18 @@ public class PrescriptionGeminiService {
 
     @Value("${gemini.model}")
     private String modelName;
+
+    private final PrescriptionRecordRepository prescriptionRecordRepository;
+    private final ImageStorageService imageStorageService;
+    private final GenerateGeminiPayload fileConverter;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public PrescriptionGeminiService(PrescriptionRecordRepository prescriptionRecordRepository, ImageStorageService imageStorageService,  GenerateGeminiPayload fileConverter) {
+        this.prescriptionRecordRepository = prescriptionRecordRepository;
+        this.imageStorageService = imageStorageService;
+        this.fileConverter = fileConverter;
+    }
 
     public List<Map<String, Object>> sendToGemini(String jsonPayload) throws Exception {
         String url = String.format(
@@ -56,6 +71,27 @@ public class PrescriptionGeminiService {
         } else {
             throw new RuntimeException("Invalid response format from Gemini");
         }
+    }
+
+    public void savePrescriptionToDatabase(PrescriptionGeminiInputDTO prescriptionGeminiInputDTO, List<Map<String, Object>> geminiResponse) throws Exception {
+
+        String mimeType = fileConverter.detectMimeType(prescriptionGeminiInputDTO.getBase64Image());
+
+        String imagePath = imageStorageService.saveImage(prescriptionGeminiInputDTO.getBase64Image(), imageStorageService.getExtensionFromMime(mimeType));
+
+        PrescriptionRecordEntity record = new PrescriptionRecordEntity();
+        record.setDoctorName(prescriptionGeminiInputDTO.getDoctorName());
+        record.setDeviceId(prescriptionGeminiInputDTO.getDeviceId());
+        record.setImagePath(imagePath);
+
+        // Convert Gemini response to JSON string
+        String geminiJson = objectMapper.writeValueAsString(geminiResponse);
+        record.setPrescriptionJson(geminiJson);
+
+        // For now, set result to NONE (you'll add real logic later)
+        record.setResult(PrescriptionRecordEntity.ResultStatus.NONE);
+
+        prescriptionRecordRepository.save(record);
     }
 
 }
