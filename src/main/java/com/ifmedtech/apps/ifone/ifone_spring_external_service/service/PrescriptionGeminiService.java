@@ -9,6 +9,7 @@ import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionRe
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.entity.PrescriptionRecordEntity;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.repository.PrescriptionRecordRepository;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.external.storage.ImageStorageService;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.external.storage.StoragePathManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +34,13 @@ public class PrescriptionGeminiService {
     private final PrescriptionRecordRepository prescriptionRecordRepository;
     private final ImageStorageService imageStorageService;
     private final GenerateGeminiPayload fileConverter;
+    private final StoragePathManager storagePathManager;
 
-    public PrescriptionGeminiService(PrescriptionRecordRepository prescriptionRecordRepository, ImageStorageService imageStorageService,  GenerateGeminiPayload fileConverter) {
+    public PrescriptionGeminiService(PrescriptionRecordRepository prescriptionRecordRepository, ImageStorageService imageStorageService, GenerateGeminiPayload fileConverter, StoragePathManager storagePathManager) {
         this.prescriptionRecordRepository = prescriptionRecordRepository;
         this.imageStorageService = imageStorageService;
         this.fileConverter = fileConverter;
+        this.storagePathManager = storagePathManager;
     }
 
     public List<Map<String, Object>> sendToGemini(String jsonPayload) throws Exception {
@@ -83,7 +86,7 @@ public class PrescriptionGeminiService {
 
         String mimeType = fileConverter.detectMimeType(inputDTO.getBase64Image());
         String extension = imageStorageService.getExtensionFromMime(mimeType);
-        String imagePath = imageStorageService.uploadFile(inputDTO.getBase64Image(), extension);
+        String imagePath = imageStorageService.uploadFile(inputDTO.getBase64Image(), storagePathManager.generatePrescriptionRecordFilePath(), extension);
         for (Map<String, Object> item : geminiResponse) {
             PrescriptionRecordEntity entity = new PrescriptionRecordEntity();
             entity.setDoctorName(inputDTO.getDoctorName());
