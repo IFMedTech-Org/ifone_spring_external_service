@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 @Service
 public class CreateWordDoc {
 
-    @Value("${app.paths.sow}")
+    @Value("${app.download.sow}")
     private String outputPath;
 
     public String createDocument(SowWordDocumentData data) throws IOException {

@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 public class ImageStorageService {
 
-    @Value("${app.paths.prescription_uploads}")
+    @Value("${app.download.prescription_uploads}")
     private String prescriptionUploadPath;
 
     @Value("${aws.s3.bucket.name}")
