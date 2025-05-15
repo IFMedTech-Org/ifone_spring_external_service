@@ -2,8 +2,20 @@ spring:
   application:
     name: ifone_spring_external_service
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ifone_prescriptions
+    username: username
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
 server:
   port: 8086
 
 gemini:
   model: gemini-2.0-flash-lite
+
+aws:
+  s3:
+    bucket:
+      name: ifone-spring-external-service
+      region: ap-south-1
