@@ -63,9 +63,4 @@ jobs:
           debug: true
           script_stop: false
           script: |
-            echo "Current directory:"
-            pwd
-            echo "Listing files in project dir:"
-            ls -la /home/ubuntu/projects/ifone/spring_external_service/
-            echo "Running deploy script..."
             bash /home/ubuntu/projects/ifone/spring_external_service/deploy.sh
