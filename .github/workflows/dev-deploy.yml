@@ -3,41 +3,41 @@ name: Build and Deploy to EC2 via ECR
 on:
   push:
     branches:
-      - main
+      - development
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 🔄 Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: ☕ Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build Spring Boot JAR
+      - name: 🛠️ Build Spring Boot JAR
         run: ./mvnw clean package -DskipTests
 
-      - name: Set up Docker Buildx
+      - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Configure AWS Credentials
+      - name: 🔐 Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      - name: Login to Amazon ECR
+      - name: 🔑 Login to Amazon ECR
         run: |
           aws ecr get-login-password --region ap-south-1 | \
-            docker login --username AWS --password-stdin 872515288690.dkr.ecr.ap-south-1.amazonaws.com
+          docker login --username AWS --password-stdin 872515288690.dkr.ecr.ap-south-1.amazonaws.com
 
-      - name: Build and Push Docker Image
+      - name: 📦 Build and Push Docker Image
         run: |
           docker buildx build \
             --platform linux/amd64 \
@@ -46,26 +46,22 @@ jobs:
             -t 872515288690.dkr.ecr.ap-south-1.amazonaws.com/ifmedtech/platform/ifone_spring_external_service:latest \
             --push .
 
-
-      - name: Check EC2 Reachability
+      - name: 🧪 Check EC2 Reachability (optional)
         run: |
           echo "Pinging EC2 instance..."
           ping -c 4 ${{ secrets.EC2_HOST }} || echo "Host not reachable"
 
-      - name: Deploy ifone_spring_external_service
+      - name: 🚀 Deploy ifone_spring_external_service
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
+          username: ${{ secrets.EC2_USER }}
           key: |
             ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          debug: true
-          script_stop: false
+          debug: false
+          script_stop: true
           script: |
-            echo "Logged in as user: $(whoami)"
-            echo "Current directory: $(pwd)"
-            echo "Checking for deploy.sh:"
-            ls -l /home/ubuntu
-            ls -l /home/ubuntu/projects/ifone/spring_external_service/
+            echo "🚀 Logged in as: $(whoami)"
+            echo "📂 Deploying from directory: /home/ubuntu/projects/ifone/spring_external_service"
             bash /home/ubuntu/projects/ifone/spring_external_service/deploy.sh
