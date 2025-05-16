@@ -6,10 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionGeminiInputDTO;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionMedicineResponseDTO;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionResultUpdateRequest;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.entity.PrescriptionMetaDataEntity;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.entity.PrescriptionRecordEntity;
+import com.ifmedtech.apps.ifone.ifone_spring_external_service.repository.PrescriptionMetaDataRepository;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.repository.PrescriptionRecordRepository;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.external.storage.ImageStorageService;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.external.storage.StoragePathManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PrescriptionGeminiService {
 
     @Value("${spring.ai.gemini.apiKey}")
@@ -32,16 +36,11 @@ public class PrescriptionGeminiService {
     private String modelName;
 
     private final PrescriptionRecordRepository prescriptionRecordRepository;
+    private final PrescriptionMetaDataRepository prescriptionMetaDataRepository;
     private final ImageStorageService imageStorageService;
     private final GenerateGeminiPayload fileConverter;
     private final StoragePathManager storagePathManager;
 
-    public PrescriptionGeminiService(PrescriptionRecordRepository prescriptionRecordRepository, ImageStorageService imageStorageService, GenerateGeminiPayload fileConverter, StoragePathManager storagePathManager) {
-        this.prescriptionRecordRepository = prescriptionRecordRepository;
-        this.imageStorageService = imageStorageService;
-        this.fileConverter = fileConverter;
-        this.storagePathManager = storagePathManager;
-    }
 
     public List<Map<String, Object>> sendToGemini(String jsonPayload) throws Exception {
         String url = String.format(
@@ -87,11 +86,18 @@ public class PrescriptionGeminiService {
         String mimeType = fileConverter.detectMimeType(inputDTO.getBase64Image());
         String extension = imageStorageService.getExtensionFromMime(mimeType);
         String imagePath = imageStorageService.uploadFile(inputDTO.getBase64Image(), storagePathManager.generatePrescriptionRecordFilePath(), extension);
+
+        // Create and save metadata entity
+        PrescriptionMetaDataEntity metadata = new PrescriptionMetaDataEntity();
+        metadata.setDoctorName(inputDTO.getDoctorName());
+        metadata.setDeviceId(inputDTO.getDeviceId());
+        metadata.setImagePath(imagePath);
+        prescriptionMetaDataRepository.save(metadata); // Make sure this repository is injected
+
+        // Save prescription records with reference to metadata
         for (Map<String, Object> item : geminiResponse) {
             PrescriptionRecordEntity entity = new PrescriptionRecordEntity();
-            entity.setDoctorName(inputDTO.getDoctorName());
-            entity.setDeviceId(inputDTO.getDeviceId());
-            entity.setImagePath(imagePath);
+            entity.setMetadata(metadata);
             entity.setResult(PrescriptionRecordEntity.ResultStatus.NONE);
             entity.setMedication((String) item.get("medication"));
             entity.setDosage((String) item.get("dosage"));

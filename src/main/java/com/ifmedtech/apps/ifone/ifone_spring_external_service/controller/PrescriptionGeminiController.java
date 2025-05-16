@@ -5,6 +5,7 @@ import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionMe
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.dto.PrescriptionResultUpdateRequest;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.GenerateGeminiPayload;
 import com.ifmedtech.apps.ifone.ifone_spring_external_service.service.PrescriptionGeminiService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/gemini")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class PrescriptionGeminiController {
 
     private final PrescriptionGeminiService geminiService;
     private final GenerateGeminiPayload fileConverter;
-
-    public PrescriptionGeminiController(PrescriptionGeminiService geminiService, GenerateGeminiPayload fileConverter) {
-        this.geminiService = geminiService;
-        this.fileConverter = fileConverter;
-    }
 
     @PostMapping(value = "/process-file", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> convertTextToJson(

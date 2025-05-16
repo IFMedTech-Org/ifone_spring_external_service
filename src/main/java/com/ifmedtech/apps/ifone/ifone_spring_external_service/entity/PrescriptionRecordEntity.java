@@ -17,14 +17,9 @@ public class PrescriptionRecordEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "doctor_name")
-    private String doctorName;
-
-    @Column(name = "device_id")
-    private String deviceId;
-
-    @Column(name = "image_path")
-    private String imagePath;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "metadata_id", nullable = false)
+    private PrescriptionMetaDataEntity metadata;
 
     @Column(name = "medication")
     private String medication;
