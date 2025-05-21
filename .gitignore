@@ -4,6 +4,14 @@ init
 #FILE
 download
 
+# Ignore generated SOW documents
+/document_downloads/
+
+# Ignore uploaded prescriptions
+/prescription_uploads/
+
+.env.local
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar

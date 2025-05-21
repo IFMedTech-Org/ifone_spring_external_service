@@ -59,13 +59,36 @@ public class WordUtils {
     }
 
     public static void addListBulletPoint(XWPFDocument doc, String text) {
+        // Sanitize input to remove newlines
+        text = text.replaceAll("[\\r\\n]+", " ");
+
+        doc.createParagraph();  // spacing line
         XWPFParagraph para = doc.createParagraph();
-        XWPFRun run = para.createRun();
-        run.setText("- " + text);  // Add bullet manually
-        run.setFontSize(10);
-        run.setFontFamily("Calibri");
-        para.setIndentationLeft(Units.toEMU(0.035));
+        para.setIndentationLeft(Units.toEMU(0.030));
+
+        String[] parts = text.split(":", 2);
+
+        if (parts.length == 2) {
+            String boldText = cleanBoldMarkers(parts[0]);
+
+            XWPFRun boldRun = para.createRun();
+            boldRun.setBold(true);
+            boldRun.setText(boldText + ": ");
+            boldRun.setFontSize(10);
+            boldRun.setFontFamily("Calibri");
+
+            XWPFRun normalRun = para.createRun();
+            normalRun.setText(parts[1].trim());
+            normalRun.setFontSize(10);
+            normalRun.setFontFamily("Calibri");
+        } else {
+            XWPFRun run = para.createRun();
+            run.setText(text);
+            run.setFontSize(10);
+            run.setFontFamily("Calibri");
+        }
     }
+
 
     public static void addPoints(XWPFDocument doc, String text) {
         initializeBullets(doc);  // sets up bullet style once
@@ -162,6 +185,14 @@ public class WordUtils {
             }
         }
         return data;
+    }
+
+    public static String cleanBoldMarkers(String text) {
+        // Removes leading and trailing ** if they exist
+        if (text.startsWith("**") && text.endsWith("**") && text.length() >= 4) {
+            return text.substring(2, text.length() - 2).trim();
+        }
+        return text.trim();
     }
 
     private static void initializeBullets(XWPFDocument doc) {
