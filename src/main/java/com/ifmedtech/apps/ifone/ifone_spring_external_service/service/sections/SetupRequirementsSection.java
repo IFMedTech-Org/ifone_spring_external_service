@@ -124,16 +124,11 @@ public class SetupRequirementsSection {
         return Arrays.stream(text.split("\n"))
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
-                .map(line -> line.replaceFirst("^[•●\\-–]+\\s*", "")) // remove leading bullet
+                .map(line -> line.replaceFirst("^[•●\\-–]+\\s*", "")) // Remove leading bullet
+                .map(line -> line.replaceAll("\\*\\*", "")) // Remove any **
                 .map(line -> {
-                    // Split at first dash with spacing
-                    String[] parts = line.split(" - ", 2);
-                    if (parts.length > 0) {
-                        String isoCode = parts[0].replaceAll("^\\*\\*|\\*\\*$", "").trim();
-                        String description = parts.length > 1 ? parts[1].replaceAll("-+$", "").trim() : "";
-                        return isoCode + " – " + description;
-                    }
-                    return line;
+                    // Match format like "ISO 13485:2016 - Description"
+                    return line.replaceFirst(":(\\d{4})\\s*[-–]\\s*", ":$1 ");
                 })
                 .collect(Collectors.toList());
     }

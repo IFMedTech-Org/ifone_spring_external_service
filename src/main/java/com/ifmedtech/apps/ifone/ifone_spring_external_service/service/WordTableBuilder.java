@@ -170,7 +170,8 @@ public class WordTableBuilder {
             XWPFTableCell cell = headerRow.getCell(i);
             XWPFParagraph para = cell.getParagraphs().getFirst();
             XWPFRun run = para.createRun();
-            run.setText(headers.get(i));
+
+            run.setText(WordUtils.cleanBoldMarkers(headers.get(i)));
             run.setBold(true);
             run.setFontSize(10);
             run.setFontFamily("Calibri");
@@ -195,10 +196,11 @@ public class WordTableBuilder {
                 run.setText(text);
                 run.setFontSize(10);
                 run.setFontFamily("Calibri");
-                if(colIndex == 0) setCellColor(cell, "CCCCCC");
-                para.setAlignment(ParagraphAlignment.CENTER);
+                if(colIndex == 0) setCellColor(cell, "F2F2F2");
+                if(colIndex == 0) run.setBold(true);
+                para.setAlignment(ParagraphAlignment.LEFT);
                 cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-                setCellPadding(cell, 80);
+                setCellPadding(cell, 120);
             }
         }
     }

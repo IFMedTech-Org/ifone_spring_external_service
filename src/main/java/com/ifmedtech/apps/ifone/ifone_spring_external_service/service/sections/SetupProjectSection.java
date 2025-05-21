@@ -34,6 +34,8 @@ public class SetupProjectSection {
         addParagraph(doc, "To define the specific tasks, deliverables, timelines, and responsibilities for a project or service engagement.", false);
 
         //Existing Products table
+        addSubHeading(doc, "4. Existing Products");
+        doc.createParagraph();
         addExistingProductsTable(doc, existingProductsTable);
     }
 
@@ -60,8 +62,6 @@ public class SetupProjectSection {
     private static void addExistingProductsTable(XWPFDocument doc, String existingProductsTable) {
         List<List<String>> existingProductsData = getSingleListFromText(existingProductsTable);
         if (!existingProductsData.isEmpty()) {
-            addSubHeading(doc, "4. Existing Products");
-            doc.createParagraph();
             WordTableBuilder.createGenericTable(doc, existingProductsData);
         } else {
             System.out.println("No existing products data found.");

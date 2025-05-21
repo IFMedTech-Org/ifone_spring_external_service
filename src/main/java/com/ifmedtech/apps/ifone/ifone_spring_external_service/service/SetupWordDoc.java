@@ -202,7 +202,7 @@ public class SetupWordDoc {
         r1.setFontSize(10);
         r1.setColor("C00000");
         r1.setBold(true);
-        r1.setFontFamily("Calibri");
+        r1.setFontFamily("Arimo");
         r1.addBreak();
 
         XWPFRun r2 = p2.createRun();
